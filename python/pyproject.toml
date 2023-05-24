@@ -111,8 +111,6 @@ target-version = ["py39"]
 include = '\.py?$'
 force-exclude = '''
 _stop_words\.py |
-_version\.py |
-versioneer\.py |
 /(
     \.eggs |
     \.git |
