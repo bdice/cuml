@@ -42,8 +42,8 @@ from libcpp.memory cimport unique_ptr
 from libcpp.utility cimport move
 from pylibraft.common.handle cimport handle_t
 from rmm.librmm.device_buffer cimport device_buffer
-from rmm.librmm.per_device_resource cimport get_current_device_resource
 from rmm.pylibrmm.device_buffer cimport DeviceBuffer
+from rmm.pylibrmm.memory_resource cimport get_current_device_resource
 
 cimport cuml.manifold.umap.lib as lib
 from cuml.metrics.distance_type cimport DistanceType
@@ -1281,7 +1281,7 @@ class UMAP(Base, InteropMixin, CMajorInputTagMixin, SparseInputTagMixin):
                     <const void*><uintptr_t>init_m.ptr,
                     init_m.size,
                     handle_.get_stream(),
-                    get_current_device_resource()
+                    get_current_device_resource().c_ref.value()
                 )
             )
 
