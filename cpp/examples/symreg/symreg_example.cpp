@@ -236,8 +236,8 @@ int main(int argc, char* argv[])
 
   // Initialize AST
   auto curr_mr = rmm::mr::get_current_device_resource_ref();
-  d_finalprogs =
-    static_cast<cg::program_t>(curr_mr.allocate(stream, params.population_size, rmm::CUDA_ALLOCATION_ALIGNMENT));
+  d_finalprogs = static_cast<cg::program_t>(
+    curr_mr.allocate(stream, params.population_size, rmm::CUDA_ALLOCATION_ALIGNMENT));
 
   std::vector<std::vector<cg::program>> history;
   history.reserve(params.generations);
