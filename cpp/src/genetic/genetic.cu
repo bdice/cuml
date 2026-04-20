@@ -229,7 +229,7 @@ void parallel_evolve(const raft::handle_t& h,
       // Free device memory allocated to program nodes in previous generation
       raft::copy(&tmp, d_oldprogs + i, 1, stream);
       rmm::mr::get_current_device_resource_ref().deallocate(
-        stream, tmp.nodes, h_nextprogs[i].len * sizeof(node), alignof(node));
+        stream, tmp.nodes, tmp.len * sizeof(node), alignof(node));
     }
 
     tmp.nodes = nullptr;
