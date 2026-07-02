@@ -123,9 +123,14 @@ html_theme = "nvidia_sphinx_theme"
 #
 html_theme_options = {
     "external_links": [],
-    "icon_links": [],
-    "github_url": "https://github.com/rapidsai/cuml",
-    "twitter_url": "https://twitter.com/rapidsai",
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/rapidsai/cuml",
+            "icon": "fa-brands fa-github",
+            "type": "fontawesome",
+        },
+    ],
     "show_toc_level": 1,
     "navbar_align": "right",
     "navbar_center": "navbar-nav, version-switcher, navbar-external-links",
@@ -168,7 +173,7 @@ latex_documents = [
     (
         master_doc,
         "cuml.tex",
-        "cuml Documentation",
+        f"{project} Documentation",
         "NVIDIA Corporation",
         "manual",
     ),
@@ -178,7 +183,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "cuml", "cuml Documentation", [author], 1)]
+man_pages = [(master_doc, "cuml", f"{project} Documentation", [author], 1)]
 
 # -- Options for Texinfo output -------------------------------------------
 
@@ -189,7 +194,7 @@ texinfo_documents = [
     (
         master_doc,
         "cuml",
-        "cuml Documentation",
+        f"{project} Documentation",
         author,
         "cuml",
         "One line description of project.",
