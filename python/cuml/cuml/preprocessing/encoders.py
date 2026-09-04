@@ -333,8 +333,29 @@ class OneHotEncoder(DeprecatedGetFeatureNamesMixin, InteropMixin, Base):
             and model.feature_name_combiner == "concat"
         ):
             raise UnsupportedOnGPU("`feature_name_combiner` is not supported")
+
+        categories = model.categories
+        # Fallback if input categories contain bytes dtypes
+        if not (isinstance(categories, str) and categories == "auto"):
+            for i, c in enumerate(model.categories):
+                if getattr(getattr(c, "dtype", None), "kind", "O") not in "OS":
+                    continue
+                try:
+                    check_cudf(c, ensure_ndim=1)
+                except TypeError as exc:
+                    exc_str = str(exc)
+                    if exc_str.startswith("An object dtype input"):
+                        invalid = "mixed"
+                    elif exc_str.startswith("Input with bytes dtype"):
+                        invalid = "bytes"
+                    else:
+                        raise
+                    raise UnsupportedOnGPU(
+                        f"Category {i} with {invalid} dtype is not supported"
+                    ) from None
+
         return {
-            "categories": model.categories,
+            "categories": categories,
             "drop": model.drop,
             "sparse_output": model.sparse_output,
             "dtype": model.dtype,
@@ -384,7 +405,11 @@ class OneHotEncoder(DeprecatedGetFeatureNamesMixin, InteropMixin, Base):
         X = check_cudf(X, input_name="X")
         return self._fit(X)
 
-    @mlfunc(set_input_type=True, preserve_index=True)
+    @mlfunc(
+        set_input_type=True,
+        preserve_index=True,
+        column_names="feature_names_out",
+    )
     @generate_docstring(
         y=None,
         return_values={
@@ -474,7 +499,7 @@ class OneHotEncoder(DeprecatedGetFeatureNamesMixin, InteropMixin, Base):
 
         return self
 
-    @mlfunc(preserve_index=True)
+    @mlfunc(preserve_index=True, column_names="feature_names_out")
     @generate_docstring(
         return_values={
             "name": "X_out",
@@ -569,7 +594,7 @@ class OneHotEncoder(DeprecatedGetFeatureNamesMixin, InteropMixin, Base):
             return out
         return out.toarray()
 
-    @mlfunc(preserve_index=True)
+    @mlfunc(preserve_index=True, column_names="feature_names_in")
     def inverse_transform(self, X):
         """Convert the data back to the original representation.
 
@@ -639,9 +664,6 @@ class OneHotEncoder(DeprecatedGetFeatureNamesMixin, InteropMixin, Base):
 
         for idx, mask in found_unknown.items():
             out.loc[mask, idx] = None
-
-        if getattr(self, "feature_names_in_", None) is not None:
-            out.columns = self.feature_names_in_
 
         return out
 
@@ -779,7 +801,11 @@ class OrdinalEncoder(OneToOneFeatureMixin, Base):
         X = check_cudf(X, input_name="X")
         return self._fit(X)
 
-    @mlfunc(set_input_type=True, preserve_index=True)
+    @mlfunc(
+        set_input_type=True,
+        preserve_index=True,
+        column_names="feature_names_out",
+    )
     @generate_docstring(
         y=None,
         return_values={
@@ -825,7 +851,7 @@ class OrdinalEncoder(OneToOneFeatureMixin, Base):
 
         return self
 
-    @mlfunc(preserve_index=True)
+    @mlfunc(preserve_index=True, column_names="feature_names_out")
     @generate_docstring(
         return_values={
             "name": "X_out",
@@ -872,7 +898,7 @@ class OrdinalEncoder(OneToOneFeatureMixin, Base):
 
         return out
 
-    @mlfunc(preserve_index=True)
+    @mlfunc(preserve_index=True, column_names="feature_names_in")
     def inverse_transform(self, X):
         """Convert the data back to the original representation.
 
@@ -928,8 +954,5 @@ class OrdinalEncoder(OneToOneFeatureMixin, Base):
 
         for idx, mask in found_unknown.items():
             out.loc[mask, idx] = None
-
-        if getattr(self, "feature_names_in_", None) is not None:
-            out.columns = self.feature_names_in_
 
         return out
