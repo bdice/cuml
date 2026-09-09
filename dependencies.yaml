@@ -41,12 +41,8 @@ files:
     output: none
     includes:
       # "devcontainers" includes everything in "all", excluding test_python_xgboost
-      # The libxgboost package depends on librmm but we do not want to have a
-      # package depending on librmm in devcontainers since it should be built
-      # from source.
       - common_build
       - cuda
-      - cutile_python
       - cuda_version
       - depends_on_cudf
       - depends_on_cuda_python
@@ -458,23 +454,6 @@ dependencies:
               use_cuda_wheels: "true"
             packages:
               - cuda-toolkit==13.3.*
-  # NOTE: 'tileiras' is needed too, but in CI that's provided by a system-installed CTK.
-  cutile_python:
-    specific:
-      - output_types: [requirements, pyproject]
-        matrices:
-          - matrix:
-              cuda: "12.*"
-            packages:
-          - matrix:
-              cuda: "13.*"
-            packages:
-              - &cutile_python_cu13 cuda-tile
-          # if no matching matrix selectors passed, list the CUDA 13 requirement
-          # (as a source of documentation in the generated pyproject.toml)
-          - matrix:
-            packages:
-              - *cutile_python_cu13
   cuda:
     common:
       - output_types: [conda]
@@ -488,12 +467,6 @@ dependencies:
           - libcusparse-dev
   cuda_wheels:
     specific:
-      # cuML needs 'nvJitLink>={whatever-cuml-was-built-against}' at runtime, and mixing
-      # old-CTK with new-nvJitLink is supported, so maintain 1 entry here per CUDA major.minor
-      # cuML is built against.
-      #
-      # nvJitLink has historically roughly followed the CTK's minor versioning scheme,
-      # but check at https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
       - output_types: [requirements, pyproject]
         matrices:
           # if use_cuda_wheels=false is provided, do not add dependencies on any CUDA wheels
@@ -501,28 +474,21 @@ dependencies:
           - matrix:
               use_cuda_wheels: "false"
             packages:
-          # We always want nvJitLink >= whatever minor version was available in the build environment
-          # nvJitLink tends to follow the CTK's minor versions, but check at https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
-          #
-          # ref: https://github.com/NVIDIA/cudf/pull/20873
           - matrix:
               cuda: "12.9"
               use_cuda_wheels: "true"
             packages:
               - cuda-toolkit[cublas,cufft,curand,cusolver,cusparse]==12.*
-              - nvidia-nvjitlink-cu12>=12.9,<13
           - matrix:
               cuda: "13.*"
               use_cuda_wheels: "true"
             packages:
               - &ctk_cu13 cuda-toolkit[cublas,cufft,curand,cusolver,cusparse]==13.*
-              - &nvjitlink_cu13 nvidia-nvjitlink>=13.3,<14
           # if no matching matrix selectors passed, list the CUDA 13 requirement
           # (just as a source of documentation, as this populates pyproject.toml in source control)
           - matrix:
             packages:
               - *ctk_cu13
-              - *nvjitlink_cu13
   docs:
     common:
       - output_types: [conda, requirements]
