@@ -14,6 +14,7 @@
 #include "smosolver.cuh"
 
 #include <cuml/common/checked_arithmetic.hpp>
+#include <cuml/common/resource_ref.hpp>
 #include <cuml/matrix/kernel_params.hpp>
 #include <cuml/svm/svm_model.h>
 #include <cuml/svm/svm_parameter.h>
@@ -25,7 +26,6 @@
 #include <rmm/aligned.hpp>
 #include <rmm/device_uvector.hpp>
 #include <rmm/mr/per_device_resource.hpp>
-#include <rmm/resource_ref.hpp>
 
 #include <thrust/copy.h>
 #include <thrust/device_ptr.h>
@@ -145,7 +145,7 @@ int svcFitX(const raft::handle_t& handle,
   {
     rmm::device_uvector<math_t> unique_labels(0, stream);
     model.n_classes = raft::label::getUniquelabels(unique_labels, labels, n_rows, stream);
-    rmm::device_async_resource_ref rmm_alloc = rmm::mr::get_current_device_resource_ref();
+    ML::device_resource_ref rmm_alloc = rmm::mr::get_current_device_resource_ref();
     model.unique_labels = (math_t*)rmm_alloc.allocate(stream, model.n_classes * sizeof(math_t));
     raft::copy(model.unique_labels, unique_labels.data(), model.n_classes, stream);
     handle_impl.sync_stream(stream);
@@ -480,8 +480,8 @@ void svcPredictSparse(const raft::handle_t& handle,
 template <typename math_t>
 void svmFreeBuffers(const raft::handle_t& handle, SvmModel<math_t>& m)
 {
-  cudaStream_t stream                      = handle.get_stream().get();
-  rmm::device_async_resource_ref rmm_alloc = rmm::mr::get_current_device_resource_ref();
+  cudaStream_t stream               = handle.get_stream().get();
+  ML::device_resource_ref rmm_alloc = rmm::mr::get_current_device_resource_ref();
   if (m.dual_coefs) rmm_alloc.deallocate(stream, m.dual_coefs, m.n_support * sizeof(math_t));
   if (m.support_idx) rmm_alloc.deallocate(stream, m.support_idx, m.n_support * sizeof(int));
   if (m.support_matrix.indptr) {
