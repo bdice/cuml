@@ -9,6 +9,7 @@
 #include "ws_util.cuh"
 
 #include <cuml/common/checked_arithmetic.hpp>
+#include <cuml/common/resource_ref.hpp>
 #include <cuml/svm/svm_model.h>
 
 #include <raft/core/handle.hpp>
@@ -22,7 +23,6 @@
 #include <rmm/aligned.hpp>
 #include <rmm/device_uvector.hpp>
 #include <rmm/mr/per_device_resource.hpp>
-#include <rmm/resource_ref.hpp>
 
 #include <cub/device/device_reduce.cuh>
 #include <cub/device/device_select.cuh>
@@ -305,7 +305,7 @@ class Results {
     return n_selected;
   }
 
-  rmm::device_async_resource_ref rmm_alloc;
+  ML::device_resource_ref rmm_alloc;
 
  private:
   const raft::handle_t& handle;
