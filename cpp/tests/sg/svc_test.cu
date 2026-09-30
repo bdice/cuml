@@ -21,6 +21,7 @@
 #include <raft/util/cudart_utils.hpp>
 
 #include <rmm/device_uvector.hpp>
+#include <rmm/mr/per_device_resource.hpp>
 
 #include <cuda/std/tuple>
 #include <thrust/device_ptr.h>
