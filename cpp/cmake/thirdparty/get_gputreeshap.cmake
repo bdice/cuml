@@ -1,6 +1,6 @@
 #=============================================================================
 # cmake-format: off
-# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 # cmake-format: on
 #=============================================================================
@@ -14,7 +14,7 @@ function(find_and_configure_gputreeshap)
     rapids_cpm_find(GPUTreeShap 0.0.1
         GLOBAL_TARGETS  GPUTreeShap::GPUTreeShap GPUTreeShap
         CPM_ARGS
-            GIT_REPOSITORY  https://github.com/rapidsai/gputreeshap.git
+            GIT_REPOSITORY  https://github.com/bdice/gputreeshap.git
             GIT_TAG         ${PKG_PINNED_TAG}
     )
 
@@ -51,4 +51,4 @@ function(find_and_configure_gputreeshap)
 
 endfunction()
 
-find_and_configure_gputreeshap(PINNED_TAG 93292317b23ef733f881c881865f5d5728dc2fea)
+find_and_configure_gputreeshap(PINNED_TAG 9b4067857a4a70bd7906d0f11fa4e007c51a87df)
