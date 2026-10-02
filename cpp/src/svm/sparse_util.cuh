@@ -5,7 +5,6 @@
 
 #pragma once
 #include <cuml/common/checked_arithmetic.hpp>
-#include <cuml/common/resource_ref.hpp>
 #include <cuml/common/utils.hpp>
 
 #include <raft/core/device_csr_matrix.hpp>
@@ -19,6 +18,7 @@
 #include <rmm/device_uvector.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 
+#include <cuda/memory_resource>
 #include <cuda/std/functional>
 #include <thrust/device_ptr.h>
 #include <thrust/execution_policy.h>

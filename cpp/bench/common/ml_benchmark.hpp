@@ -6,13 +6,13 @@
 #pragma once
 
 #include <cuml/common/logger.hpp>
-#include <cuml/common/resource_ref.hpp>
 #include <cuml/common/utils.hpp>
 
 #include <raft/util/cudart_utils.hpp>
 
 #include <rmm/mr/per_device_resource.hpp>
 
+#include <cuda/memory_resource>
 #include <cuda_runtime.h>
 
 #include <benchmark/benchmark.h>

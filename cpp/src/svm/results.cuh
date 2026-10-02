@@ -9,7 +9,6 @@
 #include "ws_util.cuh"
 
 #include <cuml/common/checked_arithmetic.hpp>
-#include <cuml/common/resource_ref.hpp>
 #include <cuml/svm/svm_model.h>
 
 #include <raft/core/handle.hpp>
@@ -26,6 +25,7 @@
 
 #include <cub/device/device_reduce.cuh>
 #include <cub/device/device_select.cuh>
+#include <cuda/memory_resource>
 
 #include <math.h>
 
@@ -305,7 +305,7 @@ class Results {
     return n_selected;
   }
 
-  ML::device_resource_ref rmm_alloc;
+  cuda::mr::device_resource_ref rmm_alloc;
 
  private:
   const raft::handle_t& handle;
