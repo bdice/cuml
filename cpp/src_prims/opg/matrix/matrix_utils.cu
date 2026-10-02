@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright (c) 2019-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-#include <cuml/common/resource_ref.hpp>
 #include <cuml/common/utils.hpp>
 #include <cuml/prims/opg/matrix/matrix_utils.hpp>
 
@@ -11,6 +10,8 @@
 
 #include <rmm/device_uvector.hpp>
 #include <rmm/mr/per_device_resource.hpp>
+
+#include <cuda/memory_resource>
 
 namespace MLCommon {
 namespace Matrix {

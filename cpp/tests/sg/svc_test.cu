@@ -4,7 +4,6 @@
  */
 
 #include <cuml/common/logger.hpp>
-#include <cuml/common/resource_ref.hpp>
 #include <cuml/datasets/make_blobs.hpp>
 #include <cuml/matrix/kernel_params.hpp>
 #include <cuml/svm/svc.hpp>
@@ -23,6 +22,7 @@
 #include <rmm/device_uvector.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 
+#include <cuda/memory_resource>
 #include <cuda/std/tuple>
 #include <thrust/device_ptr.h>
 #include <thrust/execution_policy.h>
@@ -531,8 +531,8 @@ class GetResultsTest : public ::testing::Test {
  protected:
   void FreeDenseSupport()
   {
-    ML::device_resource_ref rmm_alloc = rmm::mr::get_current_device_resource_ref();
-    auto stream                       = this->handle.get_stream();
+    cuda::mr::device_resource_ref rmm_alloc = rmm::mr::get_current_device_resource_ref();
+    auto stream                             = this->handle.get_stream();
     rmm_alloc.deallocate(stream, support_matrix.data, n_coefs * n_cols * sizeof(math_t));
     support_matrix.data = nullptr;
   }
